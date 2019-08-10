@@ -1,10 +1,10 @@
 package user
 
 import (
-	"github.com/muxih4ck/Go-Web-Application-Template/config"
-	"github.com/muxih4ck/Go-Web-Application-Template/model"
-	"github.com/muxih4ck/Go-Web-Application-Template/router/middleware"
-	"github.com/muxih4ck/Go-Web-Application-Template/util"
+	"github.com/asynccnu/table_service_v2/config"
+	"github.com/asynccnu/table_service_v2/model"
+	"github.com/asynccnu/table_service_v2/router/middleware"
+	"github.com/asynccnu/table_service_v2/util"
 	"encoding/json"
 	"net/http"
 	"os"

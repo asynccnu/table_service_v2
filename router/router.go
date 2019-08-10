@@ -3,9 +3,9 @@ package router
 import (
 	"net/http"
 
-	"github.com/muxih4ck/Go-Web-Application-Template/handler/sd"
-	"github.com/muxih4ck/Go-Web-Application-Template/handler/user"
-	"github.com/muxih4ck/Go-Web-Application-Template/router/middleware"
+	"github.com/asynccnu/table_service_v2/handler/sd"
+	"github.com/asynccnu/table_service_v2/handler/table"
+	"github.com/asynccnu/table_service_v2/router/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,17 +24,14 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	})
 
 	// api for authentication functionalities
-	g.POST("/login", user.Login)
+	//g.POST("/login", user.Login)
 
-	// The user handlers, requiring authentication
-	u := g.Group("/v1/user")
-	u.Use(middleware.AuthMiddleware())
+	api := g.Group("/api/v2/table")
+	api.Use(middleware.AuthMiddleware())
 	{
-		u.POST("", user.Create)
-		u.DELETE("/:id", user.Delete)
-		u.PUT("/:id", user.Update)
-		u.GET("", user.List)
-		u.GET("/:username", user.Get)
+		api.GET("", table.Get)
+		api.POST("", table.Add)
+		api.DELETE("", table.Delete)
 	}
 
 	// The health check handlers

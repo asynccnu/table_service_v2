@@ -1,42 +1,22 @@
 package model
 
 import (
+	"context"
 	"fmt"
+
+	"github.com/jinzhu/gorm"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/lexkong/log"
 	"github.com/spf13/viper"
-
-	// MySQL driver.
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 type Database struct {
-	Self *gorm.DB
+	Self *mongo.Client
 }
 
 var DB *Database
-
-func openDB(username, password, addr, name string) *gorm.DB {
-	config := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=%t&loc=%s",
-		username,
-		password,
-		addr,
-		name,
-		true,
-		//"Asia/Shanghai"),
-		"Local")
-
-	db, err := gorm.Open("mysql", config)
-	if err != nil {
-		log.Errorf(err, "Database connection failed. Database name: %s", name)
-	}
-
-	// set for db connection
-	setupDB(db)
-
-	return db
-}
 
 func setupDB(db *gorm.DB) {
 	db.LogMode(viper.GetBool("gormlog"))
@@ -45,14 +25,28 @@ func setupDB(db *gorm.DB) {
 }
 
 // used for cli
-func InitSelfDB() *gorm.DB {
-	return openDB(viper.GetString("db.username"),
-		viper.GetString("db.password"),
-		viper.GetString("db.addr"),
-		viper.GetString("db.name"))
+func InitSelfDB() *mongo.Client {
+	// Set client options
+	clientOptions := options.Client().ApplyURI(viper.GetString("db.url"))
+
+	// Connect to MongoDB
+	client, err := mongo.Connect(context.TODO(), clientOptions)
+	if err != nil {
+		log.Errorf(err, "Database connection failed.")
+	}
+
+	// Check the connection
+	err = client.Ping(context.TODO(), nil)
+	if err != nil {
+		log.Errorf(err, "Database connection failed.")
+	}
+
+	fmt.Println("Connected to MongoDB!")
+
+	return client
 }
 
-func GetSelfDB() *gorm.DB {
+func GetSelfDB() *mongo.Client {
 	return InitSelfDB()
 }
 
@@ -63,5 +57,5 @@ func (db *Database) Init() {
 }
 
 func (db *Database) Close() {
-	DB.Self.Close()
+	_ = DB.Self.Disconnect(context.TODO())
 }

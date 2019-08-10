@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package data;
+
+service DataProvider {
+  // 获取基本个人信息
+  rpc getStuInfo (HelloRequest) returns (HelloReply) {}
+  // 获取本科生成绩
+  rpc getUndergraduateGrade (GradeRequest) returns (GradeReply) {}
+  // 获取本科生课表
+  rpc getUndergraduateTable (GradeRequest) returns (TableReply) {}
+  // 获取研究生成绩
+  rpc getGraduateGrade (HelloRequest) returns (HelloReply) {}
+  // 获取研究生课表
+  rpc getGraduateTable (HelloRequest) returns (HelloReply) {}
+}
+
+// 获取成绩请求
+message GradeRequest {
+  string sid = 1;
+  string password = 4;
+  string xqm = 2; // 学期名
+  string xnm = 3; // 学年名
+}
+
+// 成绩返回值
+message GradeReply {
+  repeated GradeItem lists = 1;
+}
+
+// 成绩列表 item
+message GradeItem {
+	string Kcmc  = 1; // 课程名称
+	string Kcxzmc = 2; // 课程学制名称
+	string Cj   = 3;     // 成绩
+	string Jsxm   = 4;  // 教师名称
+  string Kclbmc = 5; // 课程类别名称
+  string Xf = 6; // 学分
+  string Kcgsmc = 7; // 课程类别名称
+  string Xnmc = 8; // 学年名称，比如 2016-2017（可能返回的课程列表包含多个学年）
+}
+
+// 获取课表请求
+message TableRequest {
+    string sid = 1;
+    string password = 4;
+    string xqm = 2; // 学期名
+    string xnm = 3; // 学年名
+}
+
+// 课表返回值
+message TableReply {
+    repeated TableItem lists = 1;
+}
+    
+// 课表列表 item
+message TableItem {
+    string Kcmc  = 1; // 课程名称
+    string Zcd = 2; // 周次
+    string Jcor = 3;  // 节次
+    string Cdmc = 4;  // 上课地点
+    string Xm = 5; // 教师名
+    string Xqj = 6; // 星期几上课
+    string KchID = 7; // 课程号id
+    string JxbID = 8; // 教学班id
+}
+
+
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}
+

@@ -3,10 +3,10 @@ package user
 import (
 	"strconv"
 
-	. "github.com/muxih4ck/Go-Web-Application-Template/handler"
-	"github.com/muxih4ck/Go-Web-Application-Template/model"
-	"github.com/muxih4ck/Go-Web-Application-Template/pkg/errno"
-	"github.com/muxih4ck/Go-Web-Application-Template/util"
+	. "github.com/asynccnu/table_service_v2/handler"
+	"github.com/asynccnu/table_service_v2/model"
+	"github.com/asynccnu/table_service_v2/pkg/errno"
+	"github.com/asynccnu/table_service_v2/util"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lexkong/log"

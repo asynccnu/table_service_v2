@@ -1,32 +1,30 @@
 package model
 
-import (
-	"sync"
-	"time"
-)
 
-type BaseModel struct {
-	Id        uint64     `gorm:"primary_key;AUTO_INCREMENT;column:id" json:"-"`
-	CreatedAt time.Time  `gorm:"column:createdAt" json:"-"`
-	UpdatedAt time.Time  `gorm:"column:updatedAt" json:"-"`
-	DeletedAt *time.Time `gorm:"column:deletedAt" sql:"index" json:"-"`
+type TableRowItem struct {
+	Kcmc	string `json:"kcmc" bson:"kcmc"`		// 课程名称
+	Zcd		string `json:"zcd" bson:"zcd"`			// 周次
+	Jcor	string `json:"jcor" bson:"jcor"`		// 节次
+	Cdmc	string `json:"cdmc"bson:"cdmc"`			// 上课地点
+	Xm		string `json:"xm" bson:"xm"`			// 教师名
+	Xqj		string `json:"xqj" bson:"xqj"`			// 星期几
+	KchID	string `json:"kch_id" bson:"kch_id"`	// 课程号ID
+	JxbID	string `json:"jxb_id" bson:"jxb_id"`	// 教学班ID
 }
 
-type UserInfo struct {
-	Id        uint64 `json:"id"`
-	Username  string `json:"username"`
-	SayHello  string `json:"sayHello"`
-	Password  string `json:"password"`
-	CreatedAt string `json:"createdAt"`
-	UpdatedAt string `json:"updatedAt"`
+type TableItem struct {
+	Course		string `json:"course" bson:"course"`
+	Teacher  	string `json:"teacher" bson:"teacher"`
+	Place 		string `json:"place" bson:"place"`		// 上课地点
+	Start 		string `json:"start" bson:"start"`		// 课程开始时间(start=3表示上午第三节课开始上)
+	During 		string `json:"during" bson:"during"`	// 课程持续时间(during=2表示持续2节课)
+	Day 		string `json:"day" bson:"day"`			// 上课星期,如 "1","2"..."7"
+	Weeks		[]int32 `json:"weeks" bson:"weeks"`		// 上课周次如[1, 2, 3 ... 19]
+	Remind 		bool   `json:"remind" bson:"remind"`	// 是否提醒
 }
 
-type UserList struct {
-	Lock  *sync.Mutex
-	IdMap map[uint64]*UserInfo
-}
-
-// Token represents a JSON web token.
-type Token struct {
-	Token string `json:"token"`
+type MgoTable struct {
+	//Id 		string		`bson:"id"`
+	Sid 	string		`bson:"sid"`
+	Table 	[]*TableItem	`bson:"table"`
 }
