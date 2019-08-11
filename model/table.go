@@ -101,6 +101,7 @@ func GetTable(sid string) ([]*TableItem, error) {
 	}
 
 	// 素质课
+	/*
 	tableSzkc, err := GetSzkcTable(sid)
 	if err != nil {
 		return nil, err
@@ -109,14 +110,15 @@ func GetTable(sid string) ([]*TableItem, error) {
 	if len(tableSzkc) != 0 {
 		tableList = append(tableList, tableSzkc...)
 	}
+	 */
 
 	return tableList, nil
 }
 
 // 获取素质课表
-func GetSzkcTable(sid string) ([]*TableItem, error) {
-
-}
+//func GetSzkcTable(sid string) ([]*TableItem, error) {
+//
+//}
 
 // 从数据库中获取教务课表
 func GetXkTable(sid string) ([]*TableItem, error) {

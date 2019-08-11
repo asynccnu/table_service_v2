@@ -25,7 +25,6 @@ type TableItem struct {
 
 // 教务课表和素质课的mongo存储结构
 type TableModel struct {
-	//Id 		int64			`bson:"id"`
 	Sid 	string			`bson:"sid"`
 	Table 	[]*TableItem	`json:"table "bson:"table"`
 }
