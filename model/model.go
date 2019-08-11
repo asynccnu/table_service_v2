@@ -23,8 +23,16 @@ type TableItem struct {
 	Remind 		bool   `json:"remind" bson:"remind"`	// 是否提醒
 }
 
-type MgoTable struct {
-	//Id 		string		`bson:"id"`
-	Sid 	string		`bson:"sid"`
-	Table 	[]*TableItem	`bson:"table"`
+// 教务课表和素质课的mongo存储结构
+type TableModel struct {
+	//Id 		int64			`bson:"id"`
+	Sid 	string			`bson:"sid"`
+	Table 	[]*TableItem	`json:"table "bson:"table"`
+}
+
+// 自定义课程的mongo存储结构
+type UserColModel struct {
+	Id 		int64			`bson:"id"`
+	Sid 	string			`bson:"sid"`
+	Table 	*TableItem		`bson:"table"`
 }

@@ -20,12 +20,18 @@ import (
 	"google.golang.org/grpc"
 )
 
+// 学期和学年
+var (
+	Xq = "1"
+	Xn = "2019"
+)
+
 // 获取课表
 func Get(c *gin.Context) {
 	var tableList = make([]*model.TableItem, 0)
 	sid := c.MustGet("Sid").(string)
 
-	tableFromXZ, err := GetFromXK(c)
+	tableFromXZ, err := GetFromXk(c)
 	if err != nil {
 		// 获取不到则查看数据库中是否有记录
 		haveTable, err := model.HaveTable(sid)
@@ -35,7 +41,7 @@ func Get(c *gin.Context) {
 
 			// 没有记录则返回错误
 		} else if !haveTable {
-			//log.Error()
+			SendError(c, errno.ErrDatabase, nil, "数据库中无课表数据")
 			return
 		}
 
@@ -67,19 +73,14 @@ func Get(c *gin.Context) {
 }
 
 // 从服务器中获取教务课表
-func GetFromXK(c *gin.Context) ([]*model.TableItem, error){
+func GetFromXk(c *gin.Context) ([]*model.TableItem, error){
 	var tableList = make([]*model.TableItem, 0)
-
-	var r Reqeust
-	if err := c.ShouldBindQuery(&r); err != nil {
-		SendResponse(c, errno.ErrBind, nil)
-		return tableList, err
-	}
 
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(viper.GetString("data_service_url"), grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		log.Fatal("did not connect", err)
+		return tableList, err
 	}
 	defer conn.Close()
 
@@ -92,8 +93,8 @@ func GetFromXK(c *gin.Context) ([]*model.TableItem, error){
 	table, err := client.GetUndergraduateTable(ctx, &pb.GradeRequest{
 		Sid:		c.MustGet("Sid").(string),
 		Password: 	c.MustGet("Password").(string),
-		Xqm:		r.XQM,
-		Xnm:		r.XNM,
+		Xqm:		Xq,
+		Xnm:		Xn,
 	})
 
 	if err != nil {
@@ -112,6 +113,7 @@ func GetFromXK(c *gin.Context) ([]*model.TableItem, error){
 		return tableList, err
 	}
 
+	// 获取加工后的课表
 	for _, item := range table.Lists {
 		t, err := model.Process(&model.TableRowItem{
 			Kcmc: item.Kcmc,
