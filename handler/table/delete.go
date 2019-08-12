@@ -5,19 +5,38 @@ import (
 	"github.com/asynccnu/table_service_v2/model"
 	"github.com/asynccnu/table_service_v2/pkg/errno"
 	"github.com/gin-gonic/gin"
+	"github.com/lexkong/log"
 )
 
+type DeleteItem struct {
+	Sid 	string	`json:"sid" bson:"sid"`
+	Id		string 	`json:"id" bson:"id" binding:"required"`
+}
+
 func Delete(c *gin.Context) {
-	var r DeleteRequest
-	if err := c.Bind(&r); err != nil {
-		SendBadRequest(c, errno.ErrBind, nil, err.Error())
+	log.Info("Delete function called.")
+
+	sid := c.GetHeader("sid")
+	if sid == "" {
+		SendBadRequest(c, errno.ErrBind, nil, "No sid.")
 		return
 	}
 
-	if err := model.DeleteTable(r.Sid, r.Id); err != nil {
+	id := c.Query("id")
+
+	if id == "" {
+		SendBadRequest(c, errno.ErrBind, nil, "No id.")
+		return
+	}
+
+	if delCount, err := model.DeleteTable(sid, id); err != nil {
 		SendError(c, err, nil, err.Error())
+		return
+	} else if delCount == 0 {
+		SendBadRequest(c, errno.ErrBind, nil, "This table does not exist.")
 		return
 	}
 
 	SendResponse(c, nil, nil)
+	log.Info("Delete table successfully.")
 }

@@ -5,14 +5,17 @@ import (
 	"github.com/asynccnu/table_service_v2/model"
 	"github.com/asynccnu/table_service_v2/pkg/errno"
 	"github.com/gin-gonic/gin"
+	"github.com/lexkong/log"
 )
 
 type AddResponse struct {
-	Id 	int64
+	Id 	string
 }
 
 // 自定义添加课程
 func Add(c *gin.Context) {
+	log.Infof("Add function called.")
+
 	var table model.TableItem
 
 	if err := c.BindJSON(&table); err != nil {
@@ -20,7 +23,7 @@ func Add(c *gin.Context) {
 		return
 	}
 
-	sid := c.Request.Header.Get("sid")
+	sid := c.GetHeader("sid")
 	if sid == "" {
 		SendBadRequest(c, errno.ErrBind, nil, "No sid")
 		return
@@ -33,4 +36,5 @@ func Add(c *gin.Context) {
 	}
 
 	SendResponse(c, nil, AddResponse{Id: id})
+	log.Info("Add table successfully.")
 }

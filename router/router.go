@@ -23,9 +23,6 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 		c.String(http.StatusNotFound, "The incorrect API route.")
 	})
 
-	// api for authentication functionalities
-	//g.POST("/login", user.Login)
-
 	api := g.Group("/api/v2/table")
 	api.Use(middleware.AuthMiddleware())
 	{

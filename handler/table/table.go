@@ -1,9 +1,9 @@
 package table
 
-type Reqeust struct {
-	XNM string `form:"xnm"`
-	XQM string `form:"xqm"`
-}
+//type Reqeust struct {
+//	XNM string `form:"xnm"`
+//	XQM string `form:"xqm"`
+//}
 
 //type TableItem struct {
 //	Course		string `json:"course" bson:"course"`
@@ -16,7 +16,3 @@ type Reqeust struct {
 //	Remind 		bool   `json:"remind" bson:"remind"`	// 是否提醒
 //}
 
-type DeleteRequest struct {
-	Sid 	string	`json:"sid" bson:"sid"`
-	Id		int 	`json:"id" bson:"id" binding:"required"`
-}

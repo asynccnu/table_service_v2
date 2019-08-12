@@ -2,10 +2,11 @@ package table
 
 import (
 	"context"
-	"fmt"
+	"encoding/base64"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"net/http"
+	"strings"
 	"time"
 
 	. "github.com/asynccnu/table_service_v2/handler"
@@ -13,7 +14,6 @@ import (
 	"github.com/asynccnu/table_service_v2/pkg/errno"
 	pb "github.com/asynccnu/table_service_v2/rpc"
 	"github.com/lexkong/log"
-
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -28,10 +28,29 @@ var (
 
 // 获取课表
 func Get(c *gin.Context) {
-	var tableList = make([]*model.TableItem, 0)
-	sid := c.MustGet("Sid").(string)
+	log.Info("Get function called.")
 
-	tableFromXZ, err := GetFromXk(c)
+	sid := c.GetHeader("sid")
+
+	bs, err := base64.StdEncoding.DecodeString(c.GetHeader("Authorization"))
+
+	if err != nil {
+		SendBadRequest(c, err, nil, "Base64 decode error.")
+		return
+	}
+
+	arr := strings.Split(string(bs), ":")
+	password := arr[1]
+	//fmt.Println(sid, password)
+
+	if password == "" {
+		SendBadRequest(c, errno.ErrTokenInvalid, nil, "No password")
+		return
+	}
+
+	var tableList = make([]*model.TableItem, 0)
+
+	tableFromXk, err := GetFromXk(c, sid, password)
 	if err != nil {
 		// 获取不到则查看数据库中是否有记录
 		haveTable, err := model.HaveTable(sid)
@@ -41,7 +60,7 @@ func Get(c *gin.Context) {
 
 			// 没有记录则返回错误
 		} else if !haveTable {
-			SendError(c, errno.ErrDatabase, nil, "数据库中无课表数据")
+			SendError(c, errno.ErrDatabase, nil, "No table in database.")
 			return
 		}
 
@@ -57,7 +76,7 @@ func Get(c *gin.Context) {
 	}
 
 	// 将教务课表添加到数据库中
-	if err = model.AddXKTable(sid, tableFromXZ); err != nil {
+	if err = model.AddXKTable(sid, tableFromXk); err != nil {
 		SendError(c, err, nil, err.Error())
 		return
 	}
@@ -70,10 +89,11 @@ func Get(c *gin.Context) {
 	}
 
 	SendResponse(c, nil, &tableList)
+	log.Info("Get table successfully.")
 }
 
 // 从服务器中获取教务课表
-func GetFromXk(c *gin.Context) ([]*model.TableItem, error){
+func GetFromXk(c *gin.Context, sid, password string) ([]*model.TableItem, error){
 	var tableList = make([]*model.TableItem, 0)
 
 	// Set up a connection to the server.
@@ -89,10 +109,9 @@ func GetFromXk(c *gin.Context) ([]*model.TableItem, error){
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
 
-	fmt.Println(c.MustGet("Sid").(string), c.MustGet("Password").(string))
 	table, err := client.GetUndergraduateTable(ctx, &pb.GradeRequest{
-		Sid:		c.MustGet("Sid").(string),
-		Password: 	c.MustGet("Password").(string),
+		Sid:		sid,
+		Password:	password,
 		Xqm:		Xq,
 		Xnm:		Xn,
 	})
@@ -106,11 +125,11 @@ func GetFromXk(c *gin.Context) ([]*model.TableItem, error){
 					Message: st.Message(),
 					Data:    nil,
 				})
-				return tableList, err
+				return nil, err
 			}
 		}
 		SendError(c, err, nil, err.Error())
-		return tableList, err
+		return nil, err
 	}
 
 	// 获取加工后的课表
@@ -129,7 +148,10 @@ func GetFromXk(c *gin.Context) ([]*model.TableItem, error){
 		tableList = append(tableList, &t)
 	}
 
-	fmt.Println(tableList)
+	// 测试输出
+	//for _, item := range tableList {
+	//	fmt.Println(*item)
+	//}
 
 	return tableList, nil
 }

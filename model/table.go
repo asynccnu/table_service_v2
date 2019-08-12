@@ -1,13 +1,13 @@
 package model
 
-import (
+import 	(
 	"context"
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 const (
@@ -18,19 +18,25 @@ const (
 )
 
 // 删除自定义课程
-func DeleteTable(sid string, id int) error {
+func DeleteTable(sid string, id string) (int64, error) {
 	collection := DB.Self.Database(MongoDb).Collection(UserCol)
+
+	objId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return 0, err
+	}
 
 	filter := bson.M{
 		"sid": sid,
-		"id": id,
+		"_id": objId,
 	}
 
-	if _, err := collection.DeleteOne(context.TODO(), filter); err != nil {
-		return err
+	delRes, err := collection.DeleteOne(context.TODO(), filter)
+	if  err != nil {
+		return 0, err
 	}
 
-	return nil
+	return delRes.DeletedCount, nil
 }
 
 // 查看monggodb中是否有教务课表的记录
@@ -49,13 +55,10 @@ func HaveTable(sid string) (bool, error) {
 }
 
 // 添加自定义课程
-func AddSelfTable(sid string, table *TableItem) (int64, error) {
+func AddSelfTable(sid string, table *TableItem) (string, error) {
 	collection := DB.Self.Database(MongoDb).Collection(UserCol)
 
-	// 以时间戳作为id
-	// 一个缺陷，多个同时请求可能会产生相同的时间戳
-	// 待解决
-	id := time.Now().Unix()
+	id := primitive.NewObjectID()
 	document := UserColModel{
 		Id: id,
 		Sid: sid,
@@ -63,10 +66,10 @@ func AddSelfTable(sid string, table *TableItem) (int64, error) {
 	}
 
 	if _, err := collection.InsertOne(context.TODO(), document); err != nil {
-		return 0, err
+		return "", err
 	}
 
-	return id, nil
+	return id.Hex(), nil
 }
 
 // 添加教务课表
@@ -116,9 +119,9 @@ func GetTable(sid string) ([]*TableItem, error) {
 }
 
 // 获取素质课表
-//func GetSzkcTable(sid string) ([]*TableItem, error) {
-//
-//}
+func GetSzkcTable(sid string) ([]*TableItem, error) {
+	return nil, nil
+}
 
 // 从数据库中获取教务课表
 func GetXkTable(sid string) ([]*TableItem, error) {

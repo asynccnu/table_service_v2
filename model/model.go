@@ -1,5 +1,6 @@
 package model
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type TableRowItem struct {
 	Kcmc	string `json:"kcmc" bson:"kcmc"`		// 课程名称
@@ -31,7 +32,7 @@ type TableModel struct {
 
 // 自定义课程的mongo存储结构
 type UserColModel struct {
-	Id 		int64			`bson:"id"`
+	Id 		primitive.ObjectID	`bson:"_id"`
 	Sid 	string			`bson:"sid"`
 	Table 	*TableItem		`bson:"table"`
 }
