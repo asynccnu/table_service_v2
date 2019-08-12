@@ -75,8 +75,14 @@ func AddSelfTable(sid string, table *TableItem) (string, error) {
 // 添加教务课表
 func AddXKTable(sid string, tableList []*TableItem) error {
 	collection := DB.Self.Database(MongoDb).Collection(XkCol)
+	var err error
 
-	_, err := collection.InsertOne(context.TODO(), TableModel{Sid: sid, Table: tableList})
+	// 有记录则为替换，无记录就插入
+	if haveDoc, _ := HaveTable(sid); haveDoc {
+		_, err = collection.ReplaceOne(context.TODO(), bson.M{"sid":sid}, TableModel{Sid: sid, Table: tableList})
+	} else {
+		_, err = collection.InsertOne(context.TODO(), TableModel{Sid: sid, Table: tableList})
+	}
 
 	if err != nil {
 		return err

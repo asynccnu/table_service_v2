@@ -111,13 +111,13 @@ func GetFromXk(c *gin.Context, sid, password string) ([]*model.TableItem, error)
 	defer cancel()
 
 	// 获取学年和学期
-	xn, xq := util.GetXnAndXq()
-	//fmt.Printf("xn = %s, xq = %s\n", xn, xq)
+	xn, xqm := util.GetXnAndXq()
+	//fmt.Printf("xn = %s, xqn = %s\n", xn, xqm)
 
 	table, err := client.GetUndergraduateTable(ctx, &pb.GradeRequest{
 		Sid:		sid,
 		Password:	password,
-		Xqm:		xq,
+		Xqm:		xqm,
 		Xnm:		xn,
 	})
 

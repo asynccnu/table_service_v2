@@ -25,7 +25,7 @@ func GetReqID(c *gin.Context) string {
 
 // 获取学年和学期
 func GetXnAndXq() (string, string) {
-	var xq = "1"
+	var xqn = "3"
 
 	now := time.Now()
 	year := now.Year()
@@ -37,11 +37,11 @@ func GetXnAndXq() (string, string) {
 
 	// 第三学期的时间还有点问题
 	if month >= 2 && month < 7 {
-		xq = "2"
+		xqn = "12"
 	} else if month == 7 {
-		xq = "3"
+		xqn = "16"
 	}
 
 	//fmt.Println(year, xq)
-	return strconv.Itoa(year), xq
+	return strconv.Itoa(year), xqn
 }
