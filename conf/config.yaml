@@ -4,6 +4,7 @@ name: apiserver              # API Server的名字
 url: http://127.0.0.1:8080   # pingServer函数请求的API服务器的ip:port
 max_ping_count: 10           # pingServer函数try的次数
 jwt_secret: Rtg8BPKNEf2mB4mgvKONGPZZQSaJWNLijxR42qRgq0iBb5
+data_service_url: 127.0.0.1:50051   # rpc 服务器
 log:
   writers: file,stdout # 部署时输出到 stdout
   logger_level: DEBUG
@@ -15,7 +16,6 @@ log:
   log_backup_count: 7
 db:  # DB 配置 部署时环境变量覆盖
   name: db_apiserver
-  url: mongodb://mongoadmin:secret@127.0.0.1:27017 # 本地 Mongo
-#  addr: 0.0.0.0:3306
-  username: root
-  password:
+  url: mongodb://admin:admin@127.0.0.1:27017/table    # 本地 Mongo，table数据库
+  username: admin
+  password: admin
