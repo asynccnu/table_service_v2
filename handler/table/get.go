@@ -3,8 +3,6 @@ package table
 import (
 	"context"
 	"encoding/base64"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"net/http"
 	"strings"
 	"time"
@@ -13,18 +11,21 @@ import (
 	"github.com/asynccnu/table_service_v2/model"
 	"github.com/asynccnu/table_service_v2/pkg/errno"
 	pb "github.com/asynccnu/table_service_v2/rpc"
-	"github.com/lexkong/log"
+	"github.com/asynccnu/table_service_v2/util"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lexkong/log"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // 学期和学年
-var (
-	Xq = "1"
-	Xn = "2019"
-)
+//var (
+//	Xq = "1"
+//	Xn = "2019"
+//)
 
 // 获取课表
 func Get(c *gin.Context) {
@@ -109,11 +110,15 @@ func GetFromXk(c *gin.Context, sid, password string) ([]*model.TableItem, error)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
 
+	// 获取学年和学期
+	xn, xq := util.GetXnAndXq()
+	//fmt.Printf("xn = %s, xq = %s\n", xn, xq)
+
 	table, err := client.GetUndergraduateTable(ctx, &pb.GradeRequest{
 		Sid:		sid,
 		Password:	password,
-		Xqm:		Xq,
-		Xnm:		Xn,
+		Xqm:		xq,
+		Xnm:		xn,
 	})
 
 	if err != nil {
