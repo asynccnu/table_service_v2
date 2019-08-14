@@ -6,7 +6,7 @@ type TableRowItem struct {
 	Kcmc	string `json:"kcmc" bson:"kcmc"`		// 课程名称
 	Zcd		string `json:"zcd" bson:"zcd"`			// 周次
 	Jcor	string `json:"jcor" bson:"jcor"`		// 节次
-	Cdmc	string `json:"cdmc"bson:"cdmc"`			// 上课地点
+	Cdmc	string `json:"cdmc" bson:"cdmc"`		// 上课地点
 	Xm		string `json:"xm" bson:"xm"`			// 教师名
 	Xqj		string `json:"xqj" bson:"xqj"`			// 星期几
 	KchID	string `json:"kch_id" bson:"kch_id"`	// 课程号ID
@@ -27,7 +27,7 @@ type TableItem struct {
 // 教务课表和素质课的mongo存储结构
 type TableModel struct {
 	Sid 	string			`bson:"sid"`
-	Table 	[]*TableItem	`json:"table "bson:"table"`
+	Table 	[]*TableItem	`json:"table" bson:"table"`
 }
 
 // 自定义课程的mongo存储结构
