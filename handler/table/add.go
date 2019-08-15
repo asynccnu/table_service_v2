@@ -9,7 +9,7 @@ import (
 )
 
 type AddResponse struct {
-	Id 	string
+	Id string
 }
 
 // 自定义添加课程

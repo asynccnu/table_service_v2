@@ -9,8 +9,8 @@ import (
 )
 
 type DeleteItem struct {
-	Sid 	string	`json:"sid" bson:"sid"`
-	Id		string 	`json:"id" bson:"id" binding:"required"`
+	Sid string `json:"sid" bson:"sid"`
+	Id  string `json:"id" bson:"id" binding:"required"`
 }
 
 func Delete(c *gin.Context) {

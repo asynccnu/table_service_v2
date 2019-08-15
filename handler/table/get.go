@@ -94,7 +94,7 @@ func Get(c *gin.Context) {
 }
 
 // 从服务器中获取教务课表
-func GetFromXk(c *gin.Context, sid, password string) ([]*model.TableItem, error){
+func GetFromXk(c *gin.Context, sid, password string) ([]*model.TableItem, error) {
 	var tableList = make([]*model.TableItem, 0)
 
 	// Set up a connection to the server.
@@ -115,10 +115,10 @@ func GetFromXk(c *gin.Context, sid, password string) ([]*model.TableItem, error)
 	//fmt.Printf("xn = %s, xqn = %s\n", xn, xqm)
 
 	table, err := client.GetUndergraduateTable(ctx, &pb.GradeRequest{
-		Sid:		sid,
-		Password:	password,
-		Xqm:		xqm,
-		Xnm:		xn,
+		Sid:      sid,
+		Password: password,
+		Xqm:      xqm,
+		Xnm:      xn,
 	})
 
 	if err != nil {
@@ -141,11 +141,11 @@ func GetFromXk(c *gin.Context, sid, password string) ([]*model.TableItem, error)
 	for _, item := range table.Lists {
 		t, err := model.Process(&model.TableRowItem{
 			Kcmc: item.Kcmc,
-			Zcd: item.Zcd,
+			Zcd:  item.Zcd,
 			Jcor: item.Jcor,
 			Cdmc: item.Cdmc,
-			Xm: item.Xm,
-			Xqj: item.Xqj,
+			Xm:   item.Xm,
+			Xqj:  item.Xqj,
 		})
 		if err != nil {
 			return tableList, err

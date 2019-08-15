@@ -1,6 +1,6 @@
 package model
 
-import 	(
+import (
 	"context"
 	"fmt"
 	"strconv"
@@ -11,10 +11,10 @@ import 	(
 )
 
 const (
-	MongoDb		= "table"
-	XkCol 		= "xk"		// 教务课表
-	SzkcCol		= "szkc"	// 素质课程课表
-	UserCol		= "users"	// 自定义课表
+	MongoDb = "table"
+	XkCol   = "xk"    // 教务课表
+	SzkcCol = "szkc"  // 素质课程课表
+	UserCol = "users" // 自定义课表
 )
 
 // 删除自定义课程
@@ -32,7 +32,7 @@ func DeleteTable(sid string, id string) (int64, error) {
 	}
 
 	delRes, err := collection.DeleteOne(context.TODO(), filter)
-	if  err != nil {
+	if err != nil {
 		return 0, err
 	}
 
@@ -60,8 +60,8 @@ func AddSelfTable(sid string, table *TableItem) (string, error) {
 
 	id := primitive.NewObjectID()
 	document := UserColModel{
-		Id: id,
-		Sid: sid,
+		Id:    id,
+		Sid:   sid,
 		Table: table,
 	}
 
@@ -79,7 +79,7 @@ func AddXKTable(sid string, tableList []*TableItem) error {
 
 	// 有记录则为替换，无记录就插入
 	if haveDoc, _ := HaveTable(sid); haveDoc {
-		_, err = collection.ReplaceOne(context.TODO(), bson.M{"sid":sid}, TableModel{Sid: sid, Table: tableList})
+		_, err = collection.ReplaceOne(context.TODO(), bson.M{"sid": sid}, TableModel{Sid: sid, Table: tableList})
 	} else {
 		_, err = collection.InsertOne(context.TODO(), TableModel{Sid: sid, Table: tableList})
 	}
@@ -111,15 +111,15 @@ func GetTable(sid string) ([]*TableItem, error) {
 
 	// 素质课
 	/*
-	tableSzkc, err := GetSzkcTable(sid)
-	if err != nil {
-		return nil, err
-	}
+		tableSzkc, err := GetSzkcTable(sid)
+		if err != nil {
+			return nil, err
+		}
 
-	if len(tableSzkc) != 0 {
-		tableList = append(tableList, tableSzkc...)
-	}
-	 */
+		if len(tableSzkc) != 0 {
+			tableList = append(tableList, tableSzkc...)
+		}
+	*/
 
 	return tableList, nil
 }
@@ -183,7 +183,7 @@ func Process(rowTable *TableRowItem) (TableItem, error) {
 	}
 
 	for i := weekStart; i <= weekEnd; i++ {
-		if doubleWeek && i % 2 != 0  || singleWeek && i % 2 == 0{
+		if doubleWeek && i%2 != 0 || singleWeek && i%2 == 0 {
 			continue
 		}
 		weeks = append(weeks, i)
@@ -197,13 +197,13 @@ func Process(rowTable *TableRowItem) (TableItem, error) {
 	}
 
 	return TableItem{
-		Course:		rowTable.Kcmc,
-		Teacher:	rowTable.Xm,
-		Place:		rowTable.Cdmc,
-		Start:		strconv.Itoa(classStart),
-		During:		strconv.Itoa(classEnd - classStart + 1),
-		Day: 		rowTable.Xqj,
-		Weeks:		weeks,
-		Remind: 	false,
+		Course:  rowTable.Kcmc,
+		Teacher: rowTable.Xm,
+		Place:   rowTable.Cdmc,
+		Start:   strconv.Itoa(classStart),
+		During:  strconv.Itoa(classEnd - classStart + 1),
+		Day:     rowTable.Xqj,
+		Weeks:   weeks,
+		Remind:  false,
 	}, nil
 }

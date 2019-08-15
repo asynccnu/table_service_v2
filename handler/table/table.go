@@ -15,4 +15,3 @@ package table
 //	Weeks		[]int32 `json:"weeks" bson:"weeks"`		// 上课周次如[1, 2, 3 ... 19]
 //	Remind 		bool   `json:"remind" bson:"remind"`	// 是否提醒
 //}
-
