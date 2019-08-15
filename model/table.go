@@ -11,10 +11,10 @@ import (
 )
 
 const (
-	MongoDb = "table"
-	XkCol   = "xk"    // 教务课表
-	SzkcCol = "szkc"  // 素质课程课表
-	UserCol = "users" // 自定义课表
+	MongoDb = "ccnubox"
+	XkCol   = "table_xk"    // 教务课表
+	SzkcCol = "table_szkc"  // 素质课程课表
+	UserCol = "table_users" // 自定义课表
 )
 
 // 删除自定义课程
