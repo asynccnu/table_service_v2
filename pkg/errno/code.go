@@ -13,6 +13,6 @@ var (
 	// user errors
 	ErrEncrypt           = &Errno{Code: 20101, Message: "Error occurred while encrypting the user password."}
 	ErrUserNotFound      = &Errno{Code: 20102, Message: "The user was not found."}
-	ErrTokenInvalid      = &Errno{Code: 20103, Message: "The token was invalid."}
+	ErrAuthorizationInvalid = &Errno{Code: 20103, Message: "The Authorization header was invalid."}
 	ErrPasswordIncorrect = &Errno{Code: 20104, Message: "The password was incorrect."}
 )
