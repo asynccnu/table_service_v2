@@ -1,73 +1,85 @@
 package service
 
 import (
-	"fmt"
-	"sync"
+	"context"
+	"net/http"
+	"strconv"
+	"time"
 
+	. "github.com/asynccnu/table_service_v2/handler"
 	"github.com/asynccnu/table_service_v2/model"
+	"github.com/asynccnu/table_service_v2/pkg/errno"
+	pb "github.com/asynccnu/table_service_v2/rpc"
 	"github.com/asynccnu/table_service_v2/util"
+
+	"github.com/gin-gonic/gin"
+	"github.com/lexkong/log"
+	"github.com/spf13/viper"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-func ListUser(username string, offset, limit int) ([]*model.UserInfo, uint64, error) {
-	infos := make([]*model.UserInfo, 0)
-	users, count, err := model.ListUser(username, offset, limit)
+// 从服务器中获取教务课表
+func GetFromXk(c *gin.Context, sid, password string) ([]*model.TableItem, error) {
+	var tableList = make([]*model.TableItem, 0)
+
+	// Set up a connection to the server.
+	conn, err := grpc.Dial(viper.GetString("data_service_url"), grpc.WithInsecure())
 	if err != nil {
-		return nil, count, err
+		log.Fatal("did not connect", err)
+		return tableList, err
 	}
+	defer conn.Close()
 
-	ids := []uint64{}
-	for _, user := range users {
-		ids = append(ids, user.Id)
-	}
+	client := pb.NewDataProviderClient(conn)
 
-	wg := sync.WaitGroup{}
-	userList := model.UserList{
-		Lock:  new(sync.Mutex),
-		IdMap: make(map[uint64]*model.UserInfo, len(users)),
-	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
 
-	errChan := make(chan error, 1)
-	finished := make(chan bool, 1)
+	// 获取学年和学期
+	xn, xqm := util.GetXnAndXq()
 
-	// Improve query efficiency in parallel
-	for _, u := range users {
-		wg.Add(1)
-		go func(u *model.UserModel) {
-			defer wg.Done()
+	table, err := client.GetUndergraduateTable(ctx, &pb.GradeRequest{
+		Sid:      sid,
+		Password: password,
+		Xqm:      xqm,
+		Xnm:      xn,
+	})
 
-			shortId, err := util.GenShortId()
-			if err != nil {
-				errChan <- err
-				return
+	if err != nil {
+		st, ok := status.FromError(err)
+		if ok {
+			if st.Code() == codes.Unauthenticated {
+				c.JSON(http.StatusOK, Response{
+					Code:    errno.ErrPasswordIncorrect.Code,
+					Message: st.Message(),
+					Data:    nil,
+				})
+				return nil, err
 			}
-
-			userList.Lock.Lock()
-			defer userList.Lock.Unlock()
-			userList.IdMap[u.Id] = &model.UserInfo{
-				Id:        u.Id,
-				Username:  u.Username,
-				SayHello:  fmt.Sprintf("Hello %s", shortId),
-				Password:  u.Password,
-				CreatedAt: u.CreatedAt.Format("2006-01-02 15:04:05"),
-				UpdatedAt: u.UpdatedAt.Format("2006-01-02 15:04:05"),
-			}
-		}(u)
+		}
+		SendError(c, err, nil, err.Error())
+		return nil, err
 	}
 
-	go func() {
-		wg.Wait()
-		close(finished)
-	}()
-
-	select {
-	case <-finished:
-	case err := <-errChan:
-		return nil, count, err
+	// 获取加工后的课表
+	for index, item := range table.Lists {
+		t, err := model.Process(&model.TableRowItem{
+			Kcmc: item.Kcmc,
+			Zcd:  item.Zcd,
+			Jcor: item.Jcor,
+			Cdmc: item.Cdmc,
+			Xm:   item.Xm,
+			Xqj:  item.Xqj,
+		})
+		if err != nil {
+			return tableList, err
+		}
+		t.Id = strconv.Itoa(index)
+		t.Source = "xk"
+		tableList = append(tableList, &t)
 	}
 
-	for _, id := range ids {
-		infos = append(infos, userList.IdMap[id])
-	}
-
-	return infos, count, nil
+	return tableList, nil
 }

@@ -16,12 +16,7 @@ type DeleteItem struct {
 func Delete(c *gin.Context) {
 	log.Info("Delete function called.")
 
-	sid := c.GetHeader("sid")
-	if sid == "" {
-		SendBadRequest(c, errno.ErrBind, nil, "No sid.")
-		return
-	}
-
+	sid := c.MustGet("Sid").(string)
 	id := c.Query("id")
 
 	if id == "" {

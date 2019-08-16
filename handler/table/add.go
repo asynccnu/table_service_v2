@@ -23,11 +23,7 @@ func Add(c *gin.Context) {
 		return
 	}
 
-	sid := c.GetHeader("sid")
-	if sid == "" {
-		SendBadRequest(c, errno.ErrBind, nil, "No sid")
-		return
-	}
+	sid := c.MustGet("Sid").(string)
 
 	id, err := model.AddSelfTable(sid, &table)
 	if err != nil {

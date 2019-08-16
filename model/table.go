@@ -11,10 +11,10 @@ import (
 )
 
 const (
-	MongoDb = "table"
-	XkCol   = "xk"    // 教务课表
-	SzkcCol = "szkc"  // 素质课程课表
-	UserCol = "users" // 自定义课表
+	MongoDb = "ccnubox"
+	XkCol   = "table_xk"    // 教务课表
+	SzkcCol = "table_szkc"  // 素质课程课表
+	UserCol = "table_users" // 自定义课表
 )
 
 // 删除自定义课程
@@ -59,6 +59,9 @@ func AddSelfTable(sid string, table *TableItem) (string, error) {
 	collection := DB.Self.Database(MongoDb).Collection(UserCol)
 
 	id := primitive.NewObjectID()
+	table.Id = id.Hex()
+	table.Source = "user"
+
 	document := UserColModel{
 		Id:    id,
 		Sid:   sid,
@@ -195,6 +198,7 @@ func Process(rowTable *TableRowItem) (TableItem, error) {
 	if err != nil {
 		return TableItem{}, err
 	}
+
 
 	return TableItem{
 		Course:  rowTable.Kcmc,
