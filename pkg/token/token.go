@@ -46,4 +46,3 @@ func ParseRequest(c *gin.Context) error {
 
 	return nil
 }
-
