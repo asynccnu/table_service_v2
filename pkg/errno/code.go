@@ -15,4 +15,6 @@ var (
 	ErrUserNotFound      = &Errno{Code: 20102, Message: "The user was not found."}
 	ErrAuthorizationInvalid = &Errno{Code: 20103, Message: "The Authorization header was invalid."}
 	ErrPasswordIncorrect = &Errno{Code: 20104, Message: "The password was incorrect."}
+
+	ErrWeekConvert 		 = &Errno{Code:20201, Message: "Week Integer can't be convert to week String"}
 )

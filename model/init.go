@@ -2,7 +2,7 @@ package model
 
 import (
 	"context"
-	"fmt"
+	"os"
 
 	"github.com/jinzhu/gorm"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -33,15 +33,17 @@ func InitSelfDB() *mongo.Client {
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
 		log.Errorf(err, "Database connection failed.")
+		os.Exit(-1)
 	}
 
 	// Check the connection
 	err = client.Ping(context.TODO(), nil)
 	if err != nil {
-		log.Errorf(err, "Database connection failed.")
+		log.Errorf(err, "Database check connection failed.")
+		os.Exit(-1)
 	}
 
-	fmt.Println("Connected to MongoDB!")
+	log.Info("Connected to MongoDB!")
 
 	return client
 }

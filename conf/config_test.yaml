@@ -15,6 +15,6 @@ log:
   log_backup_count: 7
 db:  # DB 配置 部署时环境变量覆盖
   name: db_apiserver
-  addr: 127.0.0.1:3306
+  addr: 127.0.0.1:27017
   username: root
   password: root
