@@ -1,6 +1,9 @@
-FROM golang:latest 
-RUN mkdir /app 
-ADD . /app/ 
-WORKDIR /app 
-RUN go build --mod vendor -o main . 
+FROM golang:1.13.4
+
+RUN mkdir -p $GOPATH/src/github.com/asynccnu/table_service_v2
+COPY . $GOPATH/src/github.com/asynccnu/table_service_v2
+WORKDIR $GOPATH/src/github.com/asynccnu/table_service_v2
+
+RUN go build -o main .
+EXPOSE 8080
 CMD ["/app/main"]
