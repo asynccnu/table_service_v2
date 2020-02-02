@@ -32,13 +32,17 @@ type TableAdaptItem struct {
 	Course  string  `json:"course"`
 	Teacher string  `json:"teacher"`
 	Place   string  `json:"place"`   // 上课地点
-	Start   int32   `json:"start"`	 // 课程开始时间(start=3表示上午第三节课开始上)
-	During  int32   `json:"during"`  // 课程持续时间(during=2表示持续2节课)
+	Start   string   `json:"start"`	 // 课程开始时间(start=3表示上午第三节课开始上)
+	During  string   `json:"during"`  // 课程持续时间(during=2表示持续2节课)
 	Day     string  `json:"day"`     // 上课星期,改为 **星期一 星期二 ... 星期六 星期日**
 	Source	string	`json:"source"` // 课程来源：xk(教务处), szkc(素质课), user(自定义)
 	Weeks   []int32 `json:"weeks"`   // 上课周次如[1, 2, 3 ... 19]
 	Remind  bool    `json:"remind"`  // 是否提醒
 	Color   int32   `json:"color"`   // 颜色
+}
+
+type TableAdaptListObject struct {
+	Table 	[]*TableAdaptItem 	`json:"table"`
 }
 
 // 教务课表和素质课的mongo存储结构

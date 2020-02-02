@@ -25,6 +25,7 @@ func Add(c *gin.Context) {
 
 	sid := c.MustGet("Sid").(string)
 
+
 	id, err := model.AddSelfTable(sid, &table)
 	if err != nil {
 		SendError(c, err, nil, err.Error())
