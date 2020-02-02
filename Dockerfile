@@ -5,5 +5,5 @@ COPY . $GOPATH/src/github.com/asynccnu/table_service_v2
 WORKDIR $GOPATH/src/github.com/asynccnu/table_service_v2
 
 RUN go build -o main .
-EXPOSE 8080
+EXPOSE 8082
 CMD ["/app/main"]
