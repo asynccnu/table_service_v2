@@ -28,7 +28,7 @@ func Get(c *gin.Context) {
 
 			// 没有记录则返回错误
 		} else if !haveTable {
-			SendError(c, errno.ErrDatabase, nil, "No table in database.")
+			SendError(c, errno.ErrNoTable, nil, "No table in database and can't get table from internet.")
 			return
 		}
 

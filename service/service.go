@@ -59,7 +59,7 @@ func GetFromXk(c *gin.Context, sid, password string) ([]*model.TableItem, error)
 				return nil, err
 			}
 		}
-		SendError(c, err, nil, err.Error())
+		//SendError(c, err, nil, err.Error())
 		return nil, err
 	}
 
