@@ -1,4 +1,4 @@
-###验证
+### 验证
 
 本项目采用[Basic Auth](https://swagger.io/docs/specification/authentication/basic-authentication/).
 
