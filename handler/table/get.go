@@ -21,6 +21,7 @@ func Get(c *gin.Context) {
 	tableFromXk, err := service.GetFromXk(c, sid, password)
 	if err != nil {
 		// 获取不到则查看数据库中是否有记录
+		log.Warn("Can't get table from Xk")
 		haveTable, err := model.HaveTable(sid)
 		if err != nil {
 			SendError(c, err, nil, err.Error())

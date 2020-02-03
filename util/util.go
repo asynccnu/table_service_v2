@@ -1,12 +1,25 @@
 package util
 
 import (
+	"github.com/spf13/viper"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/teris-io/shortid"
 )
+
+var envXn string
+var envXq string
+
+func init() {
+	// xn xq 当代码不准确时使用环境变量用来手动调整学年学期
+	// export CCNUBOX_TABLE_XN=2018
+	// export CCNUBOX_TABLE_XQ=3
+	// 当xn或xq为 空字符串 "" 时忽略环境变量 即不设置该环境变量时忽略
+	envXn = viper.GetString("table.xn")
+	envXq = viper.GetString("table.xq")
+}
 
 func GenShortId() (string, error) {
 	return shortid.Generate()
@@ -42,6 +55,16 @@ func GetXnAndXq() (string, string) {
 		xqn = "16"
 	}
 
-	//fmt.Println(year, xq)
-	return strconv.Itoa(year), xqn
+	xn := strconv.Itoa(year)
+	xq := xqn
+
+	// 使用环境变量对自动获取的学年名学期名进行兜底
+	if envXn != "" {
+		xn = envXn
+	}
+	if envXq != "" {
+		xq = envXq
+	}
+
+	return xn, xq
 }
