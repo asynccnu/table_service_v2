@@ -18,3 +18,13 @@ CCNUBOX_DB_URL="mongodb://username:password@127.0.0.1:27017/?authSource=admin"
 CCNUBOX_TABLE_XN=2018		// 当自动获取的学年不准确时使用此直接设定学年 
 CCNUBOX_TABLE_XQ=16		// 当自动获取的学期不准确时使用此直接设定学期  3:第一学期 12:第二学期 16:第三学期
 ```
+
+3. 发布release
+
+本地给可以发布的代码打上tag 并push到github仓库上，即可触发aliyun镜像仓库自动构建Docker镜像
+```sh
+# 打tag,注意一定要为 release-vx.x.x 其中x为数字,如1.0.0, 1.3.12等
+git tag release-v1.0.0 
+# 推送该tag到github
+git push origin release-v1.0.0
+```
