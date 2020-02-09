@@ -32,6 +32,8 @@ func Add(c *gin.Context) {
 		return
 	}
 
+
 	SendResponse(c, nil, AddResponse{Id: id})
 	log.Info("Add table successfully.")
+	return
 }

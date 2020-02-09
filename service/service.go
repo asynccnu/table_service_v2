@@ -2,13 +2,10 @@ package service
 
 import (
 	"context"
-	"net/http"
 	"strconv"
 	"time"
 
-	. "github.com/asynccnu/table_service_v2/handler"
 	"github.com/asynccnu/table_service_v2/model"
-	"github.com/asynccnu/table_service_v2/pkg/errno"
 	pb "github.com/asynccnu/table_service_v2/rpc"
 	"github.com/asynccnu/table_service_v2/util"
 
@@ -16,8 +13,6 @@ import (
 	"github.com/lexkong/log"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 // 从服务器中获取教务课表
@@ -48,18 +43,17 @@ func GetFromXk(c *gin.Context, sid, password string) ([]*model.TableItem, error)
 	})
 
 	if err != nil {
-		st, ok := status.FromError(err)
-		if ok {
-			if st.Code() == codes.Unauthenticated {
-				c.JSON(http.StatusOK, Response{
-					Code:    errno.ErrPasswordIncorrect.Code,
-					Message: st.Message(),
-					Data:    nil,
-				})
-				return nil, err
-			}
-		}
-		//SendError(c, err, nil, err.Error())
+		//st, ok := status.FromError(err)
+		//if ok {
+		//	if st.Code() == codes.Unauthenticated {
+		//		c.JSON(http.StatusOK, Response{
+		//			Code:    errno.ErrPasswordIncorrect.Code,
+		//			Message: st.Message(),
+		//			Data:    nil,
+		//		})
+		//		return nil, err
+		//	}
+		//}
 		return nil, err
 	}
 

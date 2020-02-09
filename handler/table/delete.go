@@ -34,4 +34,5 @@ func Delete(c *gin.Context) {
 
 	SendResponse(c, nil, nil)
 	log.Info("Delete table successfully.")
+	return
 }
