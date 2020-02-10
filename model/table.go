@@ -180,9 +180,19 @@ func Process(rowTable *TableRowItem) (TableItem, error) {
 	doubleWeek := strings.Contains(weeksString, "双")
 	singleWeek := strings.Contains(weeksString, "单")
 
-	_, err := fmt.Sscanf(weeksString, "%d-%d", &weekStart, &weekEnd)
-	if err != nil {
-		return TableItem{}, err
+	// 1-10周，1周，两种情况分别处理
+	multiWeek := strings.Contains(weeksString, "-")
+	if multiWeek {
+		_, err := fmt.Sscanf(weeksString, "%d-%d", &weekStart, &weekEnd)
+		if err != nil {
+			return TableItem{}, err
+		}
+	} else {
+		_, err := fmt.Sscanf(weeksString, "%d", &weekStart)
+		if err != nil {
+			return TableItem{}, err
+		}
+		weekEnd = weekStart
 	}
 
 	for i := weekStart; i <= weekEnd; i++ {
@@ -194,11 +204,20 @@ func Process(rowTable *TableRowItem) (TableItem, error) {
 
 	var classStart, classEnd int
 
-	_, err = fmt.Sscanf(rowTable.Jcor, "%d-%d", &classStart, &classEnd)
-	if err != nil {
-		return TableItem{}, err
+	// 节次：1-10，1，两种情况分别处理
+	multiDuring := strings.Contains(rowTable.Jcor, "-")
+	if multiDuring {
+		_, err := fmt.Sscanf(rowTable.Jcor, "%d-%d", &classStart, &classEnd)
+		if err != nil {
+			return TableItem{}, err
+		}
+	} else {
+		_, err := fmt.Sscanf(rowTable.Jcor, "%d", &classStart)
+		if err != nil {
+			return TableItem{}, err
+		}
+		classEnd = classStart
 	}
-
 
 	return TableItem{
 		Course:  rowTable.Kcmc,
