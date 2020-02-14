@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lexkong/log"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type DeleteItem struct {
@@ -25,7 +26,15 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	if delCount, err := model.DeleteTable(sid, id); err != nil {
+	// 教务处的课表不可删除，只能删除自定义课程
+	// 验证id是否属于自加的课程
+	objId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		SendBadRequest(c, errno.ErrDeleteXKTable, nil, "id error")
+		return
+	}
+
+	if delCount, err := model.DeleteTable(sid, id, objId); err != nil {
 		log.Error("DeleteTable function error", err)
 		SendError(c, errno.ErrDeleteTable, nil, err.Error())
 		return

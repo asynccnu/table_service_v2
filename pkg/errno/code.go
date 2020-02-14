@@ -17,8 +17,8 @@ var (
 	ErrAuthorizationInvalid = &Errno{Code: 20103, Message: "The Authorization header was invalid."}
 	ErrPasswordIncorrect    = &Errno{Code: 20104, Message: "The password was incorrect."}
 
-	ErrWeekConvert = &Errno{Code: 20201, Message: "Week Integer can't be convert to week String"}
-
 	// table errors
-	ErrDeleteTable = &Errno{Code: 20301, Message: "Error occurred while deleting user's table"}
+	ErrWeekConvert   = &Errno{Code: 20201, Message: "Week Integer can't be convert to week String"}
+	ErrDeleteTable   = &Errno{Code: 20202, Message: "Error occurred while deleting user's table"}
+	ErrDeleteXKTable = &Errno{Code: 20203, Message: "Can not delete tables gotten from XK"}
 )

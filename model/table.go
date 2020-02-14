@@ -19,14 +19,14 @@ const (
 )
 
 // 删除自定义课程
-func DeleteTable(sid string, id string) (int64, error) {
+func DeleteTable(sid string, id string, objId primitive.ObjectID) (int64, error) {
 	collection := DB.Self.Database(MongoDb).Collection(UserCol)
 
-	objId, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		log.Error("primitive.ObjectIDFromHex", err)
-		return 0, err
-	}
+	// objId, err := primitive.ObjectIDFromHex(id)
+	// if err != nil {
+	// 	log.Error("primitive.ObjectIDFromHex error", err)
+	// 	return 0, err
+	// }
 
 	filter := bson.M{
 		"sid": sid,
