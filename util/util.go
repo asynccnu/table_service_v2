@@ -1,11 +1,11 @@
 package util
 
 import (
-	"github.com/spf13/viper"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"github.com/teris-io/shortid"
 )
 

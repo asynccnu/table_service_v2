@@ -6,16 +6,19 @@ var (
 	InternalServerError = &Errno{Code: 10001, Message: "Internal server error"}
 	ErrBind             = &Errno{Code: 10002, Message: "Error occurred while binding the request body to the struct."}
 
-	ErrNoTable 	  = &Errno{Code:20000, Message: "Error get table."}
+	ErrNoTable    = &Errno{Code: 20000, Message: "Error get table."}
 	ErrValidation = &Errno{Code: 20001, Message: "Validation failed."}
 	ErrDatabase   = &Errno{Code: 20002, Message: "Database error."}
 	ErrToken      = &Errno{Code: 20003, Message: "Error occurred while signing the JSON web token."}
 
 	// user errors
-	ErrEncrypt           = &Errno{Code: 20101, Message: "Error occurred while encrypting the user password."}
-	ErrUserNotFound      = &Errno{Code: 20102, Message: "The user was not found."}
+	ErrEncrypt              = &Errno{Code: 20101, Message: "Error occurred while encrypting the user password."}
+	ErrUserNotFound         = &Errno{Code: 20102, Message: "The user was not found."}
 	ErrAuthorizationInvalid = &Errno{Code: 20103, Message: "The Authorization header was invalid."}
-	ErrPasswordIncorrect = &Errno{Code: 20104, Message: "The password was incorrect."}
+	ErrPasswordIncorrect    = &Errno{Code: 20104, Message: "The password was incorrect."}
 
-	ErrWeekConvert 		 = &Errno{Code:20201, Message: "Week Integer can't be convert to week String"}
+	ErrWeekConvert = &Errno{Code: 20201, Message: "Week Integer can't be convert to week String"}
+
+	// table errors
+	ErrDeleteTable = &Errno{Code: 20301, Message: "Error occurred while deleting user's table"}
 )

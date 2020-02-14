@@ -4,6 +4,7 @@ import (
 	. "github.com/asynccnu/table_service_v2/handler"
 	"github.com/asynccnu/table_service_v2/model"
 	"github.com/asynccnu/table_service_v2/pkg/errno"
+
 	"github.com/gin-gonic/gin"
 	"github.com/lexkong/log"
 )
@@ -25,7 +26,8 @@ func Delete(c *gin.Context) {
 	}
 
 	if delCount, err := model.DeleteTable(sid, id); err != nil {
-		SendError(c, err, nil, err.Error())
+		log.Error("DeleteTable function error", err)
+		SendError(c, errno.ErrDeleteTable, nil, err.Error())
 		return
 	} else if delCount == 0 {
 		SendBadRequest(c, errno.ErrBind, nil, "This table does not exist.")
@@ -34,5 +36,4 @@ func Delete(c *gin.Context) {
 
 	SendResponse(c, nil, nil)
 	log.Info("Delete table successfully.")
-	return
 }
