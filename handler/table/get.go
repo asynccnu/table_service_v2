@@ -5,6 +5,7 @@ import (
 	"github.com/asynccnu/table_service_v2/model"
 	"github.com/asynccnu/table_service_v2/pkg/errno"
 	"github.com/asynccnu/table_service_v2/service"
+
 	"github.com/gin-gonic/gin"
 	"github.com/lexkong/log"
 	"google.golang.org/grpc/codes"
@@ -19,7 +20,6 @@ func Get(c *gin.Context) {
 	password := c.MustGet("Password").(string)
 
 	var tableList = make([]*model.TableItem, 0)
-
 
 	tableFromCache := false
 	tableFromXk, err := service.GetFromXk(c, sid, password)
@@ -44,7 +44,7 @@ func Get(c *gin.Context) {
 			// 缓存获取失败
 			SendError(c, err, nil, err.Error())
 			return
-		// 数据库中没有则返回错误
+			// 数据库中没有则返回错误
 		} else if !haveTable {
 			log.Warn("Can't get table form cache.")
 			SendError(c, errno.ErrNoTable, nil, "No table in database and can't get table from internet.")
@@ -77,7 +77,6 @@ func Get(c *gin.Context) {
 		return
 	}
 
-
 	tableList = make([]*model.TableItem, 0)
 	// 加入教务课表
 	tableList = append(tableList, tableFromXk...)
@@ -95,7 +94,6 @@ func Get(c *gin.Context) {
 	log.Info("Get table successfully.")
 	return
 }
-
 
 // 与原服务格式统一
 // 与TableItem的不同之处:
@@ -121,7 +119,7 @@ func adaptTableItemList(items []*model.TableItem) (*model.TableAdaptListObject, 
 			Color:   int32(color),
 		}
 		// color 在0 1 2 3之内取值
-		color = (color+1)%4
+		color = (color + 1) % 4
 		respItems = append(respItems, &adaptItem)
 	}
 

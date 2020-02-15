@@ -26,9 +26,9 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	api := g.Group("/api/table/v2")
 	api.Use(middleware.AuthMiddleware())
 	{
-		api.GET("", table.Get)
-		api.POST("", table.Add)
-		api.DELETE("", table.Delete)
+		api.GET("/", table.Get)
+		api.POST("/", table.Add)
+		api.DELETE("/", table.Delete)
 	}
 
 	// The health check handlers

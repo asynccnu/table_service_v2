@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/lexkong/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -18,13 +19,14 @@ const (
 )
 
 // 删除自定义课程
-func DeleteTable(sid string, id string) (int64, error) {
+func DeleteTable(sid string, id string, objId primitive.ObjectID) (int64, error) {
 	collection := DB.Self.Database(MongoDb).Collection(UserCol)
 
-	objId, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return 0, err
-	}
+	// objId, err := primitive.ObjectIDFromHex(id)
+	// if err != nil {
+	// 	log.Error("primitive.ObjectIDFromHex error", err)
+	// 	return 0, err
+	// }
 
 	filter := bson.M{
 		"sid": sid,
@@ -33,6 +35,7 @@ func DeleteTable(sid string, id string) (int64, error) {
 
 	delRes, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
+		log.Error("collection.DeleteOne error", err)
 		return 0, err
 	}
 
@@ -69,6 +72,7 @@ func AddSelfTable(sid string, table *TableItem) (string, error) {
 	}
 
 	if _, err := collection.InsertOne(context.TODO(), document); err != nil {
+		log.Error("InsertOne error", err)
 		return "", err
 	}
 
@@ -105,6 +109,7 @@ func GetTable(sid string) ([]*TableItem, error) {
 	// 获取自定义课表
 	tableSelf, err := GetSelfTable(sid)
 	if err != nil {
+		log.Error("GetSelfTable error", err)
 		return nil, err
 	}
 
@@ -139,7 +144,6 @@ func GetXkTable(sid string) ([]*TableItem, error) {
 	collection := DB.Self.Database(MongoDb).Collection(XkCol)
 
 	err := collection.FindOne(context.TODO(), bson.M{"sid": sid}).Decode(tableModel)
-
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +158,6 @@ func GetSelfTable(sid string) ([]*TableItem, error) {
 	collection := DB.Self.Database(MongoDb).Collection(UserCol)
 
 	cur, err := collection.Find(context.TODO(), bson.M{"sid": sid})
-
 	if err != nil {
 		return nil, err
 	}
