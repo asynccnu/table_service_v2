@@ -24,6 +24,12 @@ type Context struct {
 // pass it to the Parse function to parses the token.
 func ParseRequest(c *gin.Context) error {
 	header := c.Request.Header.Get("Authorization")
+	// iOS 有毒，Authorization header 会被吞
+	xToken := c.Request.Header.Get("X-token")
+
+	if len(xToken) != 0 {
+		header = xToken
+	}
 
 	if len(header) == 0 {
 		return ErrMissingHeader
