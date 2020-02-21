@@ -30,6 +30,7 @@ func Get(c *gin.Context) {
 		// 先判断是否是因为密码错误，密码错误则返回Password错误
 		st, ok := status.FromError(err)
 		if !ok {
+			log.Warn("status.FromError function error")
 			SendError(c, err, nil, err.Error())
 			return
 		}
@@ -42,6 +43,7 @@ func Get(c *gin.Context) {
 		haveTable, err := model.HaveTable(sid)
 		if err != nil {
 			// 缓存获取失败
+			log.Error("HaveTable function error", err)
 			SendError(c, err, nil, err.Error())
 			return
 			// 数据库中没有则返回错误
@@ -54,6 +56,7 @@ func Get(c *gin.Context) {
 		// 不是密码错误，数据库中也有相应记录, 则尝试从数据库中获取选课课表
 		tableList, err = model.GetXkTable(sid)
 		if err != nil {
+			log.Error("GetXkTable function error", err)
 			SendError(c, err, nil, err.Error())
 			return
 		}
@@ -65,6 +68,7 @@ func Get(c *gin.Context) {
 	// 将教务课表添加到数据库中
 	if !tableFromCache {
 		if err = model.AddXKTable(sid, tableFromXk); err != nil {
+			log.Error("AddXKTable function error", err)
 			SendError(c, err, nil, err.Error())
 			return
 		}
@@ -73,6 +77,7 @@ func Get(c *gin.Context) {
 	// 获取自定义课表
 	userTableList, err := model.GetSelfTable(sid)
 	if err != nil {
+		log.Error("GetSelfTable function error", err)
 		SendError(c, err, nil, err.Error())
 		return
 	}
@@ -86,13 +91,13 @@ func Get(c *gin.Context) {
 	// table adapt
 	adaptedTableList, err := adaptTableItemList(tableList)
 	if err != nil {
+		log.Error("adaptTableItemList function error", err)
 		SendError(c, err, nil, err.Error())
 		return
 	}
 
 	SendResponse(c, nil, &adaptedTableList)
 	log.Info("Get table successfully.")
-	return
 }
 
 // 与原服务格式统一
