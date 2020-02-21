@@ -43,6 +43,7 @@ func GetFromXk(c *gin.Context, sid, password string) ([]*model.TableItem, error)
 	})
 
 	if err != nil {
+		log.Error("client.GetUndergraduateTable function error", err)
 		//st, ok := status.FromError(err)
 		//if ok {
 		//	if st.Code() == codes.Unauthenticated {
@@ -68,6 +69,7 @@ func GetFromXk(c *gin.Context, sid, password string) ([]*model.TableItem, error)
 			Xqj:  item.Xqj,
 		})
 		if err != nil {
+			log.Error("Process function error", err)
 			return tableList, err
 		}
 		t.Id = strconv.Itoa(index)

@@ -177,32 +177,20 @@ func GetSelfTable(sid string) ([]*TableItem, error) {
 // 加工得到的原始课表数据
 func Process(rowTable *TableRowItem) (TableItem, error) {
 	var weeks []int32
-	var weekStart, weekEnd int32
 
 	weeksString := rowTable.Zcd
 	doubleWeek := strings.Contains(weeksString, "双")
 	singleWeek := strings.Contains(weeksString, "单")
 
-	// 1-10周，1周，两种情况分别处理
-	multiWeek := strings.Contains(weeksString, "-")
-	if multiWeek {
-		_, err := fmt.Sscanf(weeksString, "%d-%d", &weekStart, &weekEnd)
+	// 情况：逗号分隔的多个区间
+	weekBlocks := strings.Split(weeksString, ",")
+	for _, block := range weekBlocks {
+		curWeeks, err := processWeeks(block, doubleWeek, singleWeek)
 		if err != nil {
+			log.Error("processWeeks function error", err)
 			return TableItem{}, err
 		}
-	} else {
-		_, err := fmt.Sscanf(weeksString, "%d", &weekStart)
-		if err != nil {
-			return TableItem{}, err
-		}
-		weekEnd = weekStart
-	}
-
-	for i := weekStart; i <= weekEnd; i++ {
-		if doubleWeek && i%2 != 0 || singleWeek && i%2 == 0 {
-			continue
-		}
-		weeks = append(weeks, i)
+		weeks = append(weeks, curWeeks...)
 	}
 
 	var classStart, classEnd int
@@ -232,4 +220,42 @@ func Process(rowTable *TableRowItem) (TableItem, error) {
 		Weeks:   weeks,
 		Remind:  false,
 	}, nil
+}
+
+// 加工处理每一段的周次
+func processWeeks(weeksString string, doubleWeek, singleWeek bool) ([]int32, error) {
+	var weeks []int32
+	var weekStart, weekEnd int32
+
+	// 1-10周，1周，两种情况分别处理
+	multiWeek := strings.Contains(weeksString, "-")
+	if multiWeek {
+		_, err := fmt.Sscanf(weeksString, "%d-%d", &weekStart, &weekEnd)
+		if err != nil {
+			log.Error("Split multiWeek error", err)
+			return nil, err
+		}
+	} else {
+		_, err := fmt.Sscanf(weeksString, "%d", &weekStart)
+		if err != nil {
+			return nil, err
+		}
+		weekEnd = weekStart
+	}
+
+	// 该字符串是否存在单双周标识，存在则以当前标识为准
+	curDouble := strings.Contains(weeksString, "双")
+	curSingle := strings.Contains(weeksString, "单")
+	if curSingle || curDouble {
+		doubleWeek = curDouble
+		singleWeek = curSingle
+	}
+
+	for i := weekStart; i <= weekEnd; i++ {
+		if doubleWeek && i%2 != 0 || singleWeek && i%2 == 0 {
+			continue
+		}
+		weeks = append(weeks, i)
+	}
+	return weeks, nil
 }
